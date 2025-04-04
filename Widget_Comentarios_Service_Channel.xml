@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+  <sys_update_set>
+    <name>Widget - Comentários Service Channel</name>
+    <sys_created_on>2025-04-04 13:21:09</sys_created_on>
+    <sys_class_name>sp_widget</sys_class_name>
+    <sys_id>8e3a1a8c1b022110a7c84a3f3c4bcbad</sys_id>
+  </sys_update_set>
+  <record>
+    <table>sp_widget</table>
+    <sys_id>8e3a1a8c1b022110a7c84a3f3c4bcbad</sys_id>
+    <name>Comentários Service Channel</name>
+    <script>
+(function() {
+    var data = {};
+    data.sys_id = input &amp;&amp; input.recordSysId || '';
+
+    if (input &amp;&amp; input.comment &amp;&amp; input.recordSysId) {
+        var gr = new GlideRecord('u_service_channel');
+        if (gr.get(input.recordSysId)) {
+            gr.comments = input.comment;
+            gr.update();
+        }
+    }
+
+    if (data.sys_id) {
+        var record = new GlideRecord('u_service_channel');
+        if (record.get(data.sys_id)) {
+            data.existingComments = record.comments.getJournalEntry(1);
+        }
+    }
+
+    return data;
+})();
+    </script>
+    <client_script>
+function($scope) {
+    $scope.commentText = '';
+
+    $scope.sendComment = function() {
+        if ($scope.commentText) {
+            $scope.server.update({
+                comment: $scope.commentText,
+                recordSysId: $scope.data.sys_id
+            }).then(function() {
+                $scope.commentText = '';
+            });
+        }
+    };
+}
+    </client_script>
+    <template>
+&lt;div class=&quot;panel panel-default&quot;&gt;
+  &lt;div class=&quot;panel-heading&quot;&gt;
+    &lt;h4&gt;Comentários&lt;/h4&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;panel-body&quot;&gt;
+    &lt;div ng-if=&quot;data.existingComments&quot;&gt;
+      &lt;div ng-bind-html=&quot;data.existingComments&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;textarea class=&quot;form-control&quot; ng-model=&quot;commentText&quot; rows=&quot;4&quot; placeholder=&quot;Digite seu comentário...&quot;&gt;&lt;/textarea&gt;
+    &lt;br&gt;
+    &lt;button class=&quot;btn btn-primary&quot; ng-click=&quot;sendComment()&quot;&gt;Enviar&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+    </template>
+  </record>
+</record_update>
