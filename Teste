@@ -1,0 +1,39 @@
+<div>
+  <textarea ng-model="data.comentario" placeholder="Escreva seu comentário aqui..." class="form-control"></textarea>
+  <br>
+  <button class="btn btn-primary" ng-click="c.adicionarComentario()">Comentar</button>
+
+  <div ng-if="data.mensagem" class="mt-2 alert alert-info">
+    {{data.mensagem}}
+  </div>
+</div>
+
+
+
+(function() {
+  data.mensagem = '';
+})();
+
+function($scope, $http) {
+  $scope.c = $scope;
+
+  $scope.adicionarComentario = function() {
+    if (!$scope.data.comentario) {
+      $scope.data.mensagem = 'Por favor, escreva um comentário.';
+      return;
+    }
+
+    var input = {
+      comentario: $scope.data.comentario
+    };
+
+    $http.post('/api/now/table/u_comunidade', {
+      u_comentario: input.comentario
+    }).then(function(response) {
+      $scope.data.mensagem = 'Comentário enviado com sucesso!';
+      $scope.data.comentario = ''; // limpa campo
+    }, function(error) {
+      $scope.data.mensagem = 'Erro ao enviar comentário.';
+    });
+  };
+}
